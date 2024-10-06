@@ -20,8 +20,18 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
 
+    public function loans()
+    {
+        return $this->hasMany(Loan::class);
+    }
+
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
     /**
      * The attributes that should be hidden for serialization.
      *

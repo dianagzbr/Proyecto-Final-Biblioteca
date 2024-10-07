@@ -9,8 +9,8 @@ class Book extends Model
 {
     use HasFactory;
 
-    protected $filleable = [
-        'title',
+    protected $fillable = [
+        'tittle',
         'author',
         'isbn',
         'description',
@@ -18,13 +18,4 @@ class Book extends Model
         'available_copies',
     ];
 
-    public function categories()
-    {
-        return $this->belongsToMany(Category::class);
-    }
-
-    public function loans()
-    {
-        return $this->hasMany(Loan::class);
-    }
 }

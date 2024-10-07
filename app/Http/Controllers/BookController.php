@@ -30,16 +30,15 @@ class BookController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required',
+            'tittle' => 'required',
             'author' => 'required',
             'isbn' => 'required|unique:books',
             'description' => 'required',
-            'cover_image' => 'nullable|image',
+            'cover_image' => 'nullable',
             'available_copies' => 'required|integer',
         ]);
 
         $book = Book::create($request->all());
-        $book->categories()->attach($request->categories);
 
         return redirect()->route('books.index');
 
@@ -68,11 +67,11 @@ class BookController extends Controller
     public function update(Request $request, Book $book)
     {
         $request->validate([
-            'title' => 'required',
+            'tittle' => 'required',
             'author' => 'required',
             'isbn' => 'required|unique:books,isbn,' . $book->id,
             'description' => 'required',
-            'cover_image' => 'nullable|image',
+            'cover_image' => 'nullable',
             'available_copies' => 'required|integer',
         ]);
 

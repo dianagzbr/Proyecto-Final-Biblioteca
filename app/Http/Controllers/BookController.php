@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use Illuminate\Http\Request;
-use App\Models\Category;
 
 class BookController extends Controller
 {
@@ -14,7 +13,7 @@ class BookController extends Controller
     public function index()
     {
         $books = Book::all();
-        return view('books.index-book', compact('books'));
+        return view('books.index', compact('books'));
     }
 
     /**
@@ -22,8 +21,7 @@ class BookController extends Controller
      */
     public function create()
     {
-        $categories = Category::all();
-        return view('books.create', compact('categories'));
+        return view('books.create');
     }
 
     /**
@@ -61,8 +59,7 @@ class BookController extends Controller
      */
     public function edit(Book $book)
     {
-        $categories = Category::all();
-        return view('books.edit', compact('book', 'categories'));
+        return view('books.edit', compact('book'));
     }
 
     /**
@@ -80,8 +77,6 @@ class BookController extends Controller
         ]);
 
         $book->update($request->all());
-        $book->categories()->sync($request->categories);
-
         return redirect()->route('books.show', $book);
     }
 

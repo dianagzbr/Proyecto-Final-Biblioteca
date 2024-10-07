@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Loan;
 use Illuminate\Http\Request;
+use App\Models\User;
+use App\Models\Book;
 
 class LoanController extends Controller
 {
@@ -12,7 +14,8 @@ class LoanController extends Controller
      */
     public function index()
     {
-        //
+        $loans = Loan::all();
+        return view('loans.index', compact('loans'));
     }
 
     /**
@@ -20,7 +23,9 @@ class LoanController extends Controller
      */
     public function create()
     {
-        //
+        $users = User::all();
+        $books = Book::where('available_copies', '>', 0)->get();
+        return view('loans.create', compact('users', 'books'));
     }
 
     /**
@@ -28,7 +33,18 @@ class LoanController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'book_id' => 'required|exists:books,id',
+            'loan_date' => 'required|date',
+            'due_date' => 'required|date|after:loan_date',
+        ]);
+
+        Loan::create($request->all());
+        $book = Book::find($request->book_id);
+        $book->available_copies--;
+
+        return redirect()->route('loans.index');
     }
 
     /**
@@ -52,7 +68,15 @@ class LoanController extends Controller
      */
     public function update(Request $request, Loan $loan)
     {
-        //
+        $request->$validate([
+            'return_date' => 'required|date|after:loan_date',
+        ]);
+
+        $loan->update($request->all());
+        $book = Book::find($loan->book_id);
+        $book->available_copies++;
+
+        return redirect()->route('loans.index');
     }
 
     /**
@@ -60,6 +84,10 @@ class LoanController extends Controller
      */
     public function destroy(Loan $loan)
     {
-        //
+        $loan->delete();
+        $book = Book::find($loan->book_id);
+        $book->available_copies++;
+
+        return redirect()->route('loans.index');
     }
 }

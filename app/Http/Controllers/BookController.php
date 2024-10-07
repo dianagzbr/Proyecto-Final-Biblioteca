@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use Illuminate\Http\Request;
+use App\Models\Category;
 
 class BookController extends Controller
 {
@@ -12,7 +13,8 @@ class BookController extends Controller
      */
     public function index()
     {
-        //
+        $books = Book::all();
+        return view('books.index-book', compact('books'));
     }
 
     /**
@@ -20,7 +22,8 @@ class BookController extends Controller
      */
     public function create()
     {
-        //
+        $categories = Category::all();
+        return view('books.create', compact('categories'));
     }
 
     /**
@@ -28,7 +31,21 @@ class BookController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'title' => 'required',
+            'author' => 'required',
+            'isbn' => 'required|unique:books',
+            'description' => 'required',
+            'cover_image' => 'nullable|image',
+            'available_copies' => 'required|integer',
+        ]);
+
+        $book = Book::create($request->all());
+        $book->categories()->attach($request->categories);
+
+        return redirect()->route('books.index');
+
+
     }
 
     /**
@@ -36,7 +53,7 @@ class BookController extends Controller
      */
     public function show(Book $book)
     {
-        //
+        return view('books.show', compact('book'));
     }
 
     /**
@@ -44,7 +61,8 @@ class BookController extends Controller
      */
     public function edit(Book $book)
     {
-        //
+        $categories = Category::all();
+        return view('books.edit', compact('book', 'categories'));
     }
 
     /**
@@ -52,7 +70,19 @@ class BookController extends Controller
      */
     public function update(Request $request, Book $book)
     {
-        //
+        $request->validate([
+            'title' => 'required',
+            'author' => 'required',
+            'isbn' => 'required|unique:books,isbn,' . $book->id,
+            'description' => 'required',
+            'cover_image' => 'nullable|image',
+            'available_copies' => 'required|integer',
+        ]);
+
+        $book->update($request->all());
+        $book->categories()->sync($request->categories);
+
+        return redirect()->route('books.show', $book);
     }
 
     /**
@@ -60,6 +90,7 @@ class BookController extends Controller
      */
     public function destroy(Book $book)
     {
-        //
+        $book->delete();
+        return redirect()->route('books.index');
     }
 }

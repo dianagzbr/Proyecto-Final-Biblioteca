@@ -8,8 +8,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::resource('books', BookController::class);
-    //->middleware('auth');
+Route::resource('books', BookController::class)
+    ->middleware('auth');
 
 Route::middleware([
     'auth:sanctum',

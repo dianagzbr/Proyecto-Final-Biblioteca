@@ -9,6 +9,17 @@
 <body>
     <h1>Crear Libro</h1>
 
+    @if ($errors->any())
+        <div>
+            <strong>Errores:</strong>
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+    
     <form action="{{ route('books.store') }}" method="POST">
         @csrf
 

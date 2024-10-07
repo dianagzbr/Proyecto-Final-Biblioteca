@@ -36,6 +36,10 @@ class BookController extends Controller
             'description' => 'required',
             'cover_image' => 'nullable',
             'available_copies' => 'required|integer',
+        ], [
+            'title.required' => 'El título es obligatorio.',
+            'isbn.unique' => 'El ISBN ya está registrado.',
+            'available_copies.min' => 'Debe haber al menos una copia disponible.',
         ]);
 
         $book = Book::create($request->all());
@@ -67,12 +71,16 @@ class BookController extends Controller
     public function update(Request $request, Book $book)
     {
         $request->validate([
-            'tittle' => 'required',
-            'author' => 'required',
+            'tittle' => 'required|string',
+            'author' => 'required|string',
             'isbn' => 'required|unique:books,isbn,' . $book->id,
-            'description' => 'required',
+            'description' => 'required|string',
             'cover_image' => 'nullable',
-            'available_copies' => 'required|integer',
+            'available_copies' => 'required|integer|min:1',
+        ], [
+            'title.required' => 'El título es obligatorio.',
+            'isbn.unique' => 'El ISBN ya está registrado.',
+            'available_copies.min' => 'Debe haber al menos una copia disponible.',
         ]);
 
         $book->update($request->all());
